@@ -39,6 +39,6 @@ func DB() *gorm.DB {
 		return nil
 	}
 
-	db.AutoMigrate(&model.User{})
+	db.AutoMigrate(&model.User{}, &model.Photo{}, &model.Like{})
 	return db
 }
