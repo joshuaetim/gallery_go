@@ -28,12 +28,11 @@ func RunAPI(address string) error {
 	userRoutes.POST("/register", userHandler.CreateUser)
 	userRoutes.POST("/login", userHandler.SignInUser)
 
-	apiRoutes.GET("/users", middleware.AuthorizeJWT(), userHandler.GetUsers)
-
-	adminRoutes := apiRoutes.Group("/admin", middleware.AuthorizeJWT())
+	adminRoutes := apiRoutes.Group("/admin/users", middleware.AuthorizeJWT())
+	adminRoutes.GET("/", userHandler.GetUsers)
 	adminRoutes.GET("/:id", userHandler.GetUser)
 	adminRoutes.PUT("/", userHandler.UpdateUser)
-	adminRoutes.GET("/", userHandler.GetCurrentUser)
+	// adminRoutes.GET("/", userHandler.GetCurrentUser)
 
 	return r.Run(address)
 }

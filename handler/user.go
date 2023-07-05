@@ -59,12 +59,12 @@ func (uh *userHandler) SignInUser(ctx *gin.Context) {
 	users, err := uh.repo.GetMap(query{"email": user.Email})
 	dbUser := users[0]
 	if err != nil {
-		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "details incorrect (email not found)"})
+		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "details incorrect"})
 		return
 	}
 
 	if !comparePassword(dbUser.Password, user.Password) {
-		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "details incorrect (password)"})
+		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "details incorrect"})
 		return
 	}
 
@@ -87,14 +87,14 @@ func (uh *userHandler) GetUser(ctx *gin.Context) {
 		return
 	}
 	users, err := uh.repo.GetMap(query{"id": uint(id)})
-	user := users[0]
-
-	if err != nil {
+	if err != nil || len(users) == 0 {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"error": "error fetching user",
 		})
 		return
 	}
+	user := users[0]
+
 	ctx.JSON(http.StatusOK, gin.H{"data": user.PublicUser()})
 }
 
