@@ -13,6 +13,7 @@ func RunAPI(address string) error {
 	db := db.DB()
 	repos := InitRepos(db)
 	userHandler := handler.NewUserHandler(repos.user)
+	photoHandler := handler.NewPhotoHandler(repos.photo, repos.user)
 
 	r := gin.Default()
 	r.Use(middleware.CORSMiddleware())
@@ -33,6 +34,15 @@ func RunAPI(address string) error {
 	adminRoutes.GET("/:id", userHandler.GetUser)
 	adminRoutes.PUT("/", userHandler.UpdateUser)
 	// adminRoutes.GET("/", userHandler.GetCurrentUser)
+
+	photoRoutes := apiRoutes.Group("/photos")
+	photoRoutes.GET("/", photoHandler.GetAllPhotos)
+	photoRoutes.GET("/:id", photoHandler.GetPhoto)
+
+	photoProtectedRoutes := photoRoutes.Group("", middleware.AuthorizeJWT())
+	photoProtectedRoutes.POST("/", photoHandler.CreatePhoto)
+	photoProtectedRoutes.PATCH("/:id", photoHandler.UpdatePhoto)
+	photoProtectedRoutes.DELETE("/:id", photoHandler.DeletePhoto)
 
 	return r.Run(address)
 }

@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -48,34 +49,39 @@ func (uh *userHandler) CreateUser(ctx *gin.Context) {
 	})
 }
 
-func (uh *userHandler) SignInUser(ctx *gin.Context) {
+func errorResponse(ctx *gin.Context, code int, err error) {
+	ctx.JSON(code, gin.H{
+		"error": err.Error(),
+	})
+}
+func (uh *userHandler) signinUser(ctx *gin.Context) (int, error) {
 	var user model.User
 	if err := ctx.ShouldBindJSON(&user); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
-		})
+		return http.StatusUnprocessableEntity, err
 	}
 
 	users, err := uh.repo.GetMap(query{"email": user.Email})
-	dbUser := users[0]
-	if err != nil {
-		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "details incorrect"})
-		return
+	if err != nil || len(users) == 0 {
+		return http.StatusUnauthorized, errors.New("details incorrect")
 	}
+	dbUser := users[0]
 
 	if !comparePassword(dbUser.Password, user.Password) {
-		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "details incorrect"})
-		return
+		return http.StatusUnauthorized, errors.New("details incorrect")
 	}
 
-	fmt.Println("user id before token: ", dbUser.ID)
 	token, err := GenerateToken(dbUser.ID)
 	if err != nil {
-		ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "could not generate token: " + err.Error()})
-		return
+		return http.StatusInternalServerError, err
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"data": dbUser.PublicUser(), "token": token})
+	return http.StatusOK, nil
+}
+func (uh *userHandler) SignInUser(ctx *gin.Context) {
+	if code, err := uh.signinUser(ctx); err != nil {
+		errorResponse(ctx, code, err)
+	}
 }
 
 func (uh *userHandler) GetUser(ctx *gin.Context) {

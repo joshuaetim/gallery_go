@@ -13,8 +13,8 @@ type User struct {
 	// Visitors  []Visitor `json:"visitors,omitempty"`
 }
 
-func (u *User) PublicUser() *User {
-	user := &User{
+func (u User) PublicUser() User {
+	user := User{
 		Firstname: u.Firstname,
 		Lastname:  u.Lastname,
 		Email:     u.Email,

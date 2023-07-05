@@ -28,7 +28,7 @@ func (r *photoRepo) GetPhotoMap(query map[string]interface{}) ([]model.Photo, er
 
 	queryString := "1=1"
 	for k, v := range query {
-		queryString = fmt.Sprintf("%s AND %s=?", queryString, k)
+		queryString = fmt.Sprintf("%s AND photos.%s=?", queryString, k)
 		fields = append(fields, v)
 	}
 
@@ -36,7 +36,7 @@ func (r *photoRepo) GetPhotoMap(query map[string]interface{}) ([]model.Photo, er
 	queryMain = append(queryMain, queryString)
 	queryMain = append(queryMain, fields...)
 
-	return photo, r.db.Find(&photo, queryMain...).Error
+	return photo, r.db.Joins("User").Find(&photo, queryMain...).Error
 }
 
 func (r *photoRepo) UpdatePhoto(photo model.Photo) (model.Photo, error) {

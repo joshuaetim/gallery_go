@@ -7,11 +7,13 @@ import (
 )
 
 type repos struct {
-	user interfaces.UserRepository
+	user  interfaces.UserRepository
+	photo interfaces.PhotoRepository
 }
 
 func InitRepos(dbConn *gorm.DB) *repos {
 	return &repos{
-		user: db.NewUserRepository(dbConn),
+		user:  db.NewUserRepository(dbConn),
+		photo: db.NewPhotoRepository(dbConn),
 	}
 }
