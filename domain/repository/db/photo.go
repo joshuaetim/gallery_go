@@ -23,17 +23,15 @@ func (r *photoRepo) CreatePhoto(photo model.Photo) error {
 }
 
 func (r *photoRepo) GetPhotoMap(query map[string]interface{}) ([]model.Photo, error) {
-	var queryString string
 	var fields []interface{}
 	var photo []model.Photo
+
+	queryString := "1=1"
 	for k, v := range query {
-		if queryString != "" {
-			queryString = " " + queryString + " AND "
-		}
-		queryString = fmt.Sprintf("%s%s = ?", queryString, k)
+		queryString = fmt.Sprintf("%s AND %s=?", queryString, k)
 		fields = append(fields, v)
 	}
-	// fields[0]
+
 	var queryMain []interface{}
 	queryMain = append(queryMain, queryString)
 	queryMain = append(queryMain, fields...)

@@ -9,6 +9,7 @@ import (
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 func DB() *gorm.DB {
@@ -33,7 +34,13 @@ func DB() *gorm.DB {
 		log.Fatalf("invalid driver: %s", os.Getenv("DB_DRIVER"))
 	}
 
-	db, err := gorm.Open(dialect, &gorm.Config{TranslateError: true})
+	config := &gorm.Config{
+		TranslateError: true,
+	}
+	if os.Getenv("ENV") == "dev" {
+		config.Logger = logger.Default.LogMode(logger.Info)
+	}
+	db, err := gorm.Open(dialect, config)
 	if err != nil {
 		log.Fatalf("Error connecting to database (%v)(%v): %v", dialect.Name(), dsn, err)
 		return nil

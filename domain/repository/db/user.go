@@ -23,17 +23,15 @@ func (r *userRepo) AddUser(user model.User) (model.User, error) {
 }
 
 func (r *userRepo) GetMap(query map[string]interface{}) ([]model.User, error) {
-	var queryString string
 	var fields []interface{}
 	var user []model.User
+
+	queryString := "1=1"
 	for k, v := range query {
-		if queryString != "" {
-			queryString = " " + queryString + " AND "
-		}
-		queryString = fmt.Sprintf("%s%s = ?", queryString, k)
+		queryString = fmt.Sprintf("%s AND %s=?", queryString, k)
 		fields = append(fields, v)
 	}
-	// fields[0]
+
 	var queryMain []interface{}
 	queryMain = append(queryMain, queryString)
 	queryMain = append(queryMain, fields...)

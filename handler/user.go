@@ -154,7 +154,8 @@ func (uh *userHandler) GetCurrentUser(ctx *gin.Context) {
 }
 
 func (uh *userHandler) GetUsers(ctx *gin.Context) {
-	users, err := uh.repo.GetMap(query{"1": "1"})
+	users, err := uh.repo.GetMap(query{"\"1\"": "1"})
+	fmt.Println(users)
 	if err != nil {
 		ctx.JSON(http.StatusUnauthorized, gin.H{
 			"error": err.Error(),
