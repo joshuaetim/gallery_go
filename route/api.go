@@ -12,8 +12,9 @@ import (
 func RunAPI(address string) error {
 	db := db.DB()
 	repos := InitRepos(db)
-	userHandler := handler.NewUserHandler(repos.user)
-	photoHandler := handler.NewPhotoHandler(repos.photo, repos.user)
+	userHandler := handler.NewUserHandler(repos)
+	photoHandler := handler.NewPhotoHandler(repos)
+	likeHandler := handler.NewLikeHandler(repos)
 
 	r := gin.Default()
 	r.Use(middleware.CORSMiddleware())
@@ -43,6 +44,12 @@ func RunAPI(address string) error {
 	photoProtectedRoutes.POST("/", photoHandler.CreatePhoto)
 	photoProtectedRoutes.PATCH("/:id", photoHandler.UpdatePhoto)
 	photoProtectedRoutes.DELETE("/:id", photoHandler.DeletePhoto)
+
+	likeRoutes := apiRoutes.Group("/likes", middleware.AuthorizeJWT())
+	likeRoutes.POST("/", likeHandler.CreateLike)
+	likeRoutes.GET("/", likeHandler.GetLikes)
+	likeRoutes.GET("/:photo", likeHandler.GetPhotoLikes)
+	likeRoutes.DELETE("/:id", likeHandler.DeleteLike)
 
 	return r.Run(address)
 }

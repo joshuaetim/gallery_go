@@ -9,11 +9,13 @@ import (
 type repos struct {
 	user  interfaces.UserRepository
 	photo interfaces.PhotoRepository
+	like  interfaces.LikeRepository
 }
 
-func InitRepos(dbConn *gorm.DB) *repos {
-	return &repos{
-		user:  db.NewUserRepository(dbConn),
-		photo: db.NewPhotoRepository(dbConn),
+func InitRepos(dbConn *gorm.DB) *interfaces.Repositories {
+	return &interfaces.Repositories{
+		User:  db.NewUserRepository(dbConn),
+		Photo: db.NewPhotoRepository(dbConn),
+		Like:  db.NewLikeRepository(dbConn),
 	}
 }

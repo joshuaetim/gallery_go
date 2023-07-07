@@ -28,7 +28,7 @@ func (r *likeRepo) GetLikesMap(query map[string]interface{}) ([]model.Like, erro
 
 	queryString := "1=1"
 	for k, v := range query {
-		queryString = fmt.Sprintf("%s AND %s=?", queryString, k)
+		queryString = fmt.Sprintf("%s AND likes.%s=?", queryString, k)
 		fields = append(fields, v)
 	}
 
@@ -36,7 +36,7 @@ func (r *likeRepo) GetLikesMap(query map[string]interface{}) ([]model.Like, erro
 	queryMain = append(queryMain, queryString)
 	queryMain = append(queryMain, fields...)
 
-	return like, r.db.Find(&like, queryMain...).Error
+	return like, r.db.Joins("User").Joins("Photo").Find(&like, queryMain...).Error
 }
 
 func (r *likeRepo) DeleteLike(like model.Like) error {

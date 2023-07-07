@@ -16,10 +16,10 @@ type photoHandler struct {
 	userRepo domain.UserRepository
 }
 
-func NewPhotoHandler(repo domain.PhotoRepository, userRepo domain.UserRepository) interfaces.PhotoHandler {
+func NewPhotoHandler(repos *domain.Repositories) interfaces.PhotoHandler {
 	return &photoHandler{
-		repo:     repo,
-		userRepo: userRepo,
+		repo:     repos.Photo,
+		userRepo: repos.User,
 	}
 }
 

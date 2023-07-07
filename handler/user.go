@@ -19,9 +19,9 @@ type userHandler struct {
 	repo domain.UserRepository
 }
 
-func NewUserHandler(userRepo domain.UserRepository) interfaces.UserHandler {
+func NewUserHandler(repos *domain.Repositories) interfaces.UserHandler {
 	return &userHandler{
-		repo: userRepo,
+		repo: repos.User,
 	}
 }
 
