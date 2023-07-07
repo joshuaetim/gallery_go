@@ -2,8 +2,13 @@ package handler
 
 import (
 	"errors"
+	"fmt"
+	"io"
 	"net/http"
+	"os"
+	"path/filepath"
 	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joshuaetim/akiraka3/domain/model"
@@ -32,22 +37,43 @@ func emptyStrings(texts ...string) bool {
 	return false
 }
 
+var Folder = "uploads"
+
+func uploadFile(ctx *gin.Context) (string, error) {
+	file, header, err := ctx.Request.FormFile("file")
+	if err != nil {
+		return "", err
+	}
+	fullpath := fmt.Sprintf("%s/%d%s", Folder, time.Now().Unix(), filepath.Base(header.Filename))
+	newFile, err := os.Create(fullpath)
+	if err != nil {
+		return "", err
+	}
+	io.Copy(newFile, file)
+	return fullpath[len(Folder)+1:], nil
+}
+
 func (ph *photoHandler) createPhoto(ctx *gin.Context) (int, error) {
 	var photo model.Photo
-	if err := ctx.ShouldBindJSON(&photo); err != nil {
-		return http.StatusUnprocessableEntity, err
+	link, err := uploadFile(ctx)
+	if err != nil {
+		return http.StatusInternalServerError, err
 	}
+	photo.Link = link
+	photo.Title = ctx.Request.FormValue("title")
+	photo.Story = ctx.Request.FormValue("story")
+
 	if emptyStrings(photo.Link, photo.Title) {
 		return http.StatusUnprocessableEntity, errors.New("please fill all fields")
 	}
 	userId := ctx.GetFloat64("userID")
 	photo.UserID = uint(userId)
 
-	err := ph.repo.CreatePhoto(photo)
+	err = ph.repo.CreatePhoto(photo)
 	if err != nil {
 		return http.StatusInternalServerError, err
 	}
-	ctx.JSON(http.StatusOK, gin.H{
+	ctx.JSON(http.StatusCreated, gin.H{
 		"data": "create photo successful",
 	})
 
@@ -182,6 +208,29 @@ func (ph *photoHandler) deletePhoto(ctx *gin.Context) (int, error) {
 }
 func (ph *photoHandler) DeletePhoto(ctx *gin.Context) {
 	if code, err := ph.deletePhoto(ctx); err != nil {
+		errorResponse(ctx, code, err)
+	}
+}
+
+func (ph *photoHandler) getPhotosByUser(ctx *gin.Context) (int, error) {
+	userId, err := strconv.Atoi(ctx.Param("userId"))
+	if err != nil {
+		return http.StatusUnprocessableEntity, err
+	}
+	photos, err := ph.repo.GetPhotoMap(query{"user_id": userId})
+	if err != nil {
+		return http.StatusUnprocessableEntity, err
+	}
+	photos = new(model.Photo).PublicArray(photos)
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"photos": photos,
+	})
+	return 0, nil
+}
+
+func (ph *photoHandler) GetPhotosByUser(ctx *gin.Context) {
+	if code, err := ph.getPhotosByUser(ctx); err != nil {
 		errorResponse(ctx, code, err)
 	}
 }

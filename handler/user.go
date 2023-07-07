@@ -146,14 +146,13 @@ func (uh *userHandler) GetCurrentUser(ctx *gin.Context) {
 	userId := ctx.GetFloat64("userID")
 	fmt.Println(userId)
 	users, err := uh.repo.GetMap(query{"id": uint(userId)})
-	user := users[0]
-
-	if err != nil {
+	if err != nil || len(users) == 0 {
 		ctx.JSON(http.StatusUnauthorized, gin.H{
-			"error": err.Error(),
+			"error": "user not found",
 		})
 		return
 	}
+	user := users[0]
 	ctx.JSON(http.StatusOK, gin.H{
 		"user": user.PublicUser(),
 	})

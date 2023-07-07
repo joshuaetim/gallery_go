@@ -30,6 +30,8 @@ func RunAPI(address string) error {
 	userRoutes.POST("/register", userHandler.CreateUser)
 	userRoutes.POST("/login", userHandler.SignInUser)
 
+	userRoutes.GET("/", middleware.AuthorizeJWT(), userHandler.GetCurrentUser)
+
 	adminRoutes := apiRoutes.Group("/admin/users", middleware.AuthorizeJWT())
 	adminRoutes.GET("/", userHandler.GetUsers)
 	adminRoutes.GET("/:id", userHandler.GetUser)
@@ -39,6 +41,7 @@ func RunAPI(address string) error {
 	photoRoutes := apiRoutes.Group("/photos")
 	photoRoutes.GET("/", photoHandler.GetAllPhotos)
 	photoRoutes.GET("/:id", photoHandler.GetPhoto)
+	photoRoutes.GET("/user/:userId", photoHandler.GetPhotosByUser)
 
 	photoProtectedRoutes := photoRoutes.Group("", middleware.AuthorizeJWT())
 	photoProtectedRoutes.POST("/", photoHandler.CreatePhoto)
@@ -50,6 +53,8 @@ func RunAPI(address string) error {
 	likeRoutes.GET("/", likeHandler.GetLikes)
 	likeRoutes.GET("/:photo", likeHandler.GetPhotoLikes)
 	likeRoutes.DELETE("/:id", likeHandler.DeleteLike)
+
+	r.Static("/uploads", "./uploads")
 
 	return r.Run(address)
 }
