@@ -20,7 +20,9 @@ func RunAPI(address string) error {
 	r.Use(middleware.CORSMiddleware())
 
 	r.GET("/", func(ctx *gin.Context) {
-		ctx.String(http.StatusOK, "Welcome to Gallery")
+		msg := "Welcome to Gallery"
+		msg = ctx.Request.Host
+		ctx.String(http.StatusOK, msg)
 	})
 	apiRoutes := r.Group("/api")
 

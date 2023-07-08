@@ -53,6 +53,16 @@ func uploadFile(ctx *gin.Context) (string, error) {
 	return fullpath[len(Folder)+1:], nil
 }
 
+func cleanPhotoArray(input []model.Photo) []model.Photo {
+	var output []model.Photo
+	for _, photo := range input {
+		p := photo
+		p.Link = fmt.Sprintf("%s/%s", os.Getenv("FILE_HOST"), p.Link)
+		output = append(output, p)
+	}
+	return output
+}
+
 func (ph *photoHandler) createPhoto(ctx *gin.Context) (int, error) {
 	var photo model.Photo
 	link, err := uploadFile(ctx)
@@ -94,7 +104,7 @@ func (ph *photoHandler) getPhoto(ctx *gin.Context) (int, error) {
 	if err != nil || len(photos) == 0 {
 		return http.StatusInternalServerError, errors.New("photo record not found")
 	}
-	photos = new(model.Photo).PublicArray(photos)
+	photos = cleanPhotoArray(new(model.Photo).PublicArray(photos))
 
 	ctx.JSON(http.StatusOK, gin.H{
 		"photo": photos[0],
@@ -112,7 +122,7 @@ func (ph *photoHandler) getAllPhotos(ctx *gin.Context) (int, error) {
 	if err != nil {
 		return http.StatusUnprocessableEntity, err
 	}
-	photos = new(model.Photo).PublicArray(photos)
+	photos = cleanPhotoArray(new(model.Photo).PublicArray(photos))
 
 	ctx.JSON(http.StatusOK, gin.H{
 		"photos": photos,
@@ -222,6 +232,7 @@ func (ph *photoHandler) getPhotosByUser(ctx *gin.Context) (int, error) {
 		return http.StatusUnprocessableEntity, err
 	}
 	photos = new(model.Photo).PublicArray(photos)
+	photos = cleanPhotoArray(photos)
 
 	ctx.JSON(http.StatusOK, gin.H{
 		"photos": photos,
