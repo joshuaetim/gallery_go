@@ -54,7 +54,7 @@ func RunAPI(address string) error {
 	likeRoutes.POST("/", likeHandler.CreateLike)
 	likeRoutes.GET("/", likeHandler.GetLikes)
 	likeRoutes.GET("/:photo", likeHandler.GetPhotoLikes)
-	likeRoutes.DELETE("/:id", likeHandler.DeleteLike)
+	likeRoutes.DELETE("/:photo", likeHandler.DeleteLike)
 
 	r.Static("/uploads", "./uploads")
 

@@ -75,11 +75,11 @@ func (lh *likeHandler) getPhotoLikes(ctx *gin.Context) (int, error) {
 }
 
 func (lh *likeHandler) deleteLike(ctx *gin.Context) (int, error) {
-	likeId, err := strconv.Atoi(ctx.Param("id"))
+	likeId, err := strconv.Atoi(ctx.Param("photo"))
 	if err != nil {
 		return http.StatusUnprocessableEntity, err
 	}
-	likes, err := lh.repo.GetLikesMap(query{"id": uint(likeId)})
+	likes, err := lh.repo.GetLikesMap(query{"photo_id": uint(likeId)})
 	if err != nil || len(likes) == 0 {
 		return http.StatusInternalServerError, errors.New("photo not found")
 	}
