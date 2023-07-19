@@ -1,4 +1,4 @@
-module github.com/joshuaetim/akiraka3
+module github.com/joshuaetim/gallery_go
 
 go 1.17
 

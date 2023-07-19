@@ -8,9 +8,9 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"github.com/joshuaetim/akiraka3/domain/model"
-	domain "github.com/joshuaetim/akiraka3/domain/repository/interfaces"
-	"github.com/joshuaetim/akiraka3/handler/interfaces"
+	"github.com/joshuaetim/gallery_go/domain/model"
+	domain "github.com/joshuaetim/gallery_go/domain/repository/interfaces"
+	"github.com/joshuaetim/gallery_go/handler/interfaces"
 
 	"golang.org/x/crypto/bcrypt"
 )

@@ -3,8 +3,8 @@ package db
 import (
 	"fmt"
 
-	"github.com/joshuaetim/akiraka3/domain/model"
-	"github.com/joshuaetim/akiraka3/domain/repository/interfaces"
+	"github.com/joshuaetim/gallery_go/domain/model"
+	"github.com/joshuaetim/gallery_go/domain/repository/interfaces"
 	"gorm.io/gorm"
 )
 

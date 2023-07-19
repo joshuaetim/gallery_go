@@ -4,9 +4,9 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/joshuaetim/akiraka3/domain/repository/db"
-	"github.com/joshuaetim/akiraka3/handler"
-	"github.com/joshuaetim/akiraka3/middleware"
+	"github.com/joshuaetim/gallery_go/domain/repository/db"
+	"github.com/joshuaetim/gallery_go/handler"
+	"github.com/joshuaetim/gallery_go/middleware"
 )
 
 func RunAPI(address string) error {

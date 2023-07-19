@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/joshuaetim/akiraka3/domain/repository/db"
+	"github.com/joshuaetim/gallery_go/domain/repository/db"
 )
 
 type JsonReq struct {

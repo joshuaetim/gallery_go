@@ -1,6 +1,6 @@
 package interfaces
 
-import "github.com/joshuaetim/akiraka3/domain/model"
+import "github.com/joshuaetim/gallery_go/domain/model"
 
 type UserRepository interface {
 	AddUser(model.User) (model.User, error)

@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
-	"github.com/joshuaetim/akiraka3/route"
+	"github.com/joshuaetim/gallery_go/route"
 )
 
 func main() {

@@ -13,9 +13,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
-	"github.com/joshuaetim/akiraka3/domain/repository/db"
-	"github.com/joshuaetim/akiraka3/factory"
-	"github.com/joshuaetim/akiraka3/handler"
+	"github.com/joshuaetim/gallery_go/domain/repository/db"
+	"github.com/joshuaetim/gallery_go/factory"
+	"github.com/joshuaetim/gallery_go/handler"
 	"github.com/stretchr/testify/assert"
 	"gorm.io/gorm"
 )

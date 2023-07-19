@@ -1,8 +1,8 @@
 package route
 
 import (
-	"github.com/joshuaetim/akiraka3/domain/repository/db"
-	"github.com/joshuaetim/akiraka3/domain/repository/interfaces"
+	"github.com/joshuaetim/gallery_go/domain/repository/db"
+	"github.com/joshuaetim/gallery_go/domain/repository/interfaces"
 	"gorm.io/gorm"
 )
 

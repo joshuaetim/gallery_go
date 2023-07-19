@@ -7,9 +7,9 @@ import (
 	"testing"
 
 	"github.com/joho/godotenv"
-	"github.com/joshuaetim/akiraka3/domain/model"
-	"github.com/joshuaetim/akiraka3/domain/repository/db"
-	"github.com/joshuaetim/akiraka3/factory"
+	"github.com/joshuaetim/gallery_go/domain/model"
+	"github.com/joshuaetim/gallery_go/domain/repository/db"
+	"github.com/joshuaetim/gallery_go/factory"
 	"github.com/stretchr/testify/assert"
 )
 
