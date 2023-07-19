@@ -36,13 +36,13 @@ func (r *photoRepo) GetPhotoMap(query map[string]interface{}) ([]model.Photo, er
 	queryMain = append(queryMain, queryString)
 	queryMain = append(queryMain, fields...)
 
-	return photo, r.db.Joins("User").Find(&photo, queryMain...).Error
+	return photo, r.db.Order("created_at desc").Joins("User").Find(&photo, queryMain...).Error
 }
 
 func (r *photoRepo) SearchPhotos(term string) ([]model.Photo, error) {
 	var photos []model.Photo
 	termPrep := "%" + term + "%"
-	return photos, r.db.Joins("User").Find(&photos, "title LIKE ? OR story LIKE ? OR link LIKE ?", termPrep, termPrep, termPrep).Error
+	return photos, r.db.Order("created_at desc").Joins("User").Find(&photos, "title LIKE ? OR story LIKE ? OR link LIKE ?", termPrep, termPrep, termPrep).Error
 }
 
 func (r *photoRepo) UpdatePhoto(photo model.Photo) (model.Photo, error) {
