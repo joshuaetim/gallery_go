@@ -41,7 +41,9 @@ func RunAPI(address string) error {
 	// adminRoutes.GET("/", userHandler.GetCurrentUser)
 
 	photoRoutes := apiRoutes.Group("/photos")
-	photoRoutes.GET("/", photoHandler.GetAllPhotos)
+	photoRoutes.GET("/search", middleware.AuthorizeJWT(false), photoHandler.SearchPhotos)
+	photoRoutes.GET("/", middleware.AuthorizeJWT(), photoHandler.GetAllPhotos)
+	photoRoutes.GET("/public", photoHandler.GetAllPhotos)
 	photoRoutes.GET("/:id", photoHandler.GetPhoto)
 	photoRoutes.GET("/user/:userId", photoHandler.GetPhotosByUser)
 

@@ -9,14 +9,16 @@ import (
 	"github.com/joshuaetim/akiraka3/handler"
 )
 
-func AuthorizeJWT() gin.HandlerFunc {
+func AuthorizeJWT(strict ...bool) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		var BearerSchema string = "Bearer "
 		authHeader := ctx.GetHeader("Authorization")
 		if authHeader == "" {
-			ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-				"error": "no auth header found",
-			})
+			if strict[0] {
+				ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+					"error": "no auth header found",
+				})
+			}
 			return
 		}
 		// take care of empty header contigency

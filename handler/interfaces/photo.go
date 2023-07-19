@@ -9,4 +9,5 @@ type PhotoHandler interface {
 	GetPhotosByUser(*gin.Context)
 	UpdatePhoto(*gin.Context)
 	DeletePhoto(*gin.Context)
+	SearchPhotos(*gin.Context)
 }

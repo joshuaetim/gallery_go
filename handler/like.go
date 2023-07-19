@@ -25,6 +25,7 @@ func NewLikeHandler(repos *domain.Repositories) interfaces.LikeHandler {
 
 func cleanLikesArray(input []model.Like) []model.Like {
 	var output []model.Like
+	input = new(model.Like).PublicArray(input)
 	for _, like := range input {
 		l := like
 		l.Photo = cleanPhotoArray([]model.Photo{l.Photo})[0]
@@ -39,6 +40,13 @@ func (lh *likeHandler) createLike(ctx *gin.Context) (int, error) {
 		return http.StatusUnprocessableEntity, err
 	}
 	like.UserID = uint(ctx.GetFloat64("userID"))
+
+	if likes, err := lh.repo.GetLikesMap(query{"user_id": like.UserID, "photo_id": like.PhotoID}); err == nil && len(likes) > 0 {
+		// delete like instead
+		lh.repo.DeleteLike(likes[0])
+		ctx.JSON(http.StatusCreated, gin.H{"data": "unliked"})
+		return 0, nil
+	}
 	like, err := lh.repo.CreateLike(like)
 	if err != nil {
 		return http.StatusInternalServerError, errors.New("request failed")
@@ -54,7 +62,6 @@ func (lh *likeHandler) getLikes(ctx *gin.Context) (int, error) {
 	if err != nil || len(likes) == 0 {
 		return http.StatusNotFound, errors.New("no liked photos yet")
 	}
-	likes = new(model.Like).PublicArray(likes)
 	likes = cleanLikesArray(likes)
 
 	ctx.JSON(http.StatusOK, gin.H{"likes": likes})
@@ -67,7 +74,6 @@ func (lh *likeHandler) getPhotoLikes(ctx *gin.Context) (int, error) {
 	if err != nil || len(likes) == 0 {
 		return http.StatusNotFound, errors.New("no likes yet")
 	}
-	likes = new(model.Like).PublicArray(likes)
 	likes = cleanLikesArray(likes)
 
 	ctx.JSON(http.StatusOK, gin.H{"likes": likes})

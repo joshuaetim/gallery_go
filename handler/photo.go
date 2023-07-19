@@ -19,12 +19,14 @@ import (
 type photoHandler struct {
 	repo     domain.PhotoRepository
 	userRepo domain.UserRepository
+	likeRepo domain.LikeRepository
 }
 
 func NewPhotoHandler(repos *domain.Repositories) interfaces.PhotoHandler {
 	return &photoHandler{
 		repo:     repos.Photo,
 		userRepo: repos.User,
+		likeRepo: repos.Like,
 	}
 }
 
@@ -124,8 +126,15 @@ func (ph *photoHandler) getAllPhotos(ctx *gin.Context) (int, error) {
 	}
 	photos = cleanPhotoArray(new(model.Photo).PublicArray(photos))
 
+	var likes []model.Like
+	if userId := uint(ctx.GetFloat64("userID")); userId != 0 {
+		likes, _ = ph.likeRepo.GetLikesMap(query{"user_id": userId})
+		likes = cleanLikesArray(likes)
+	}
+
 	ctx.JSON(http.StatusOK, gin.H{
 		"photos": photos,
+		"likes":  likes,
 	})
 	return 0, nil
 }
@@ -242,6 +251,33 @@ func (ph *photoHandler) getPhotosByUser(ctx *gin.Context) (int, error) {
 
 func (ph *photoHandler) GetPhotosByUser(ctx *gin.Context) {
 	if code, err := ph.getPhotosByUser(ctx); err != nil {
+		errorResponse(ctx, code, err)
+	}
+}
+
+func (ph *photoHandler) searchPhotos(ctx *gin.Context) (int, error) {
+	term := ctx.Query("s")
+	photos, err := ph.repo.SearchPhotos(term)
+	if err != nil || len(photos) == 0 {
+		return http.StatusNotFound, errors.New("photo not found")
+	}
+	photos = cleanPhotoArray(new(model.Photo).PublicArray(photos))
+
+	var likes []model.Like
+	if userId := uint(ctx.GetFloat64("userID")); userId != 0 {
+		likes, _ = ph.likeRepo.GetLikesMap(query{"user_id": userId})
+		likes = cleanLikesArray(likes)
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"photos": photos,
+		"likes":  likes,
+	})
+	return 0, nil
+}
+
+func (ph *photoHandler) SearchPhotos(ctx *gin.Context) {
+	if code, err := ph.searchPhotos(ctx); err != nil {
 		errorResponse(ctx, code, err)
 	}
 }
