@@ -49,7 +49,7 @@ func RunAPI(address string) error {
 
 	photoProtectedRoutes := photoRoutes.Group("", middleware.AuthorizeJWT())
 	photoProtectedRoutes.POST("/", photoHandler.CreatePhoto)
-	photoProtectedRoutes.PATCH("/:id", photoHandler.UpdatePhoto)
+	photoProtectedRoutes.PUT("/:id", photoHandler.UpdatePhoto)
 	photoProtectedRoutes.DELETE("/:id", photoHandler.DeletePhoto)
 
 	likeRoutes := apiRoutes.Group("/likes", middleware.AuthorizeJWT())
