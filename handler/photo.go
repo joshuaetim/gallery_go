@@ -46,6 +46,9 @@ func uploadFile(ctx *gin.Context) (string, error) {
 	if err != nil {
 		return "", err
 	}
+	if fileHeader := header.Header.Get("Content-Type"); fileHeader != "image/jpeg" && fileHeader != "image/png" {
+		return "", errors.New("file not an image")
+	}
 	fullpath := fmt.Sprintf("%s/%d%s", Folder, time.Now().Unix(), filepath.Base(header.Filename))
 	newFile, err := os.Create(fullpath)
 	if err != nil {

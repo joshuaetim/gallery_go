@@ -32,9 +32,11 @@ func AuthorizeJWT(strict ...bool) gin.HandlerFunc {
 
 		token, err := handler.ValidateToken(tokenString)
 		if err != nil {
-			ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-				"error": "invalid token",
-			})
+			if strict[0] {
+				ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+					"error": "invalid token",
+				})
+			}
 			return
 		}
 		claims, ok := token.Claims.(jwt.MapClaims)
