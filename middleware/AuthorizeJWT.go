@@ -10,6 +10,9 @@ import (
 )
 
 func AuthorizeJWT(strict ...bool) gin.HandlerFunc {
+	if len(strict) == 0 {
+		strict = append(strict, true)
+	}
 	return func(ctx *gin.Context) {
 		var BearerSchema string = "Bearer "
 		authHeader := ctx.GetHeader("Authorization")
